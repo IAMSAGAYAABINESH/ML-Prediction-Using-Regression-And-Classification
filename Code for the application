@@ -1,0 +1,270 @@
+print("welcome to predicting values")
+print("\n")
+print("what do you want to do")
+print("regression or classification? enter 1 for regression / 2 for classification")
+choice1 = input("enter your choice : ")
+
+#-----------------------------------------------------------------regression----------------------------------------------------------------
+
+if choice1=="1":
+  print("you have chosen regression!")
+  print("choose your model!")
+  print("1-linear,2-multiple,3-polynomial,4-support vector regression")
+  modelchoice1=input("enter your choice of model(1-4)")
+
+  #--------------------------------------------------------------linear regression----------------------------------------------------------
+
+  if modelchoice1=="1":
+    print("your choice linear!")
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    file = input("enter the file path of the fileyou want to use:")
+    dataset = pd.read_csv(file)
+    X = dataset.iloc[:, :-1].values
+    y = dataset.iloc[:, -1].values
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    print(X_test)
+    from sklearn.linear_model import LinearRegression
+    regressor = LinearRegression()
+    regressor.fit(X_train, y_train)
+    y_pred = regressor.predict(X_test)
+    print(y_pred)
+    print("training set results")
+    plt.scatter(X_train, y_train, color="red")
+    plt.plot(X_train, regressor.predict(X_train), color="blue")
+    plt.title("Salary vs Experience (Training Set)")
+    plt.xlabel("Years Of Experience")
+    plt.ylabel("Salary")
+    plt.show()
+    print("test set results")
+    plt.scatter(X_test, y_test, color="red")
+    plt.plot(X_train, regressor.predict(X_train), color="blue")
+    plt.title("Salary vs Experience (Test Set)")
+    plt.xlabel("Years Of Experience")
+    plt.ylabel("Salary")
+    plt.show()
+
+    #----------------------------------------------------------multiple regression---------------------------------------------------------------
+
+  elif modelchoice1=="2":
+    print("your choice multiple!")
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    file = input("enter the file path of the fileyou want to use:")
+    dataset = pd.read_csv(file)
+    x = dataset.iloc[:, :-1].values
+    y = dataset.iloc[:, -1].values
+    print(x)
+    from sklearn.compose import ColumnTransformer
+    from sklearn.preprocessing import OneHotEncoder
+    ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(), [3])], remainder='passthrough')
+    x = np.array(ct.fit_transform(x))
+    print(x)
+    from sklearn.model_selection import train_test_split
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+    from sklearn.linear_model import LinearRegression
+    regressor = LinearRegression()
+    regressor.fit(x_train, y_train)
+    y_pred = regressor.predict(x_test)
+    np.set_printoptions(precision=2)
+    print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)), 1))
+
+    #-----------------------------------------------------------polynomial regression----------------------------------------------
+
+  elif modelchoice1=="3":
+    #polynimial regression (unchanged)
+    print("your choice polynomial!")
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    file=input("enter the file path of the file you want to use: ")
+    dataset = pd.read_csv(file)
+    x = dataset.iloc[:, 1:-1].values
+    y = dataset.iloc[:, -1].values
+    from sklearn.linear_model import LinearRegression
+    lin_reg = LinearRegression()
+    lin_reg.fit(x, y)
+    from sklearn.preprocessing import PolynomialFeatures
+    poly_reg = PolynomialFeatures(degree=4)
+    poly_x = poly_reg.fit_transform(x)
+    lin_reg2 = LinearRegression()
+    lin_reg2.fit(poly_x, y)
+    plt.scatter(x, y, color="red")
+    plt.plot(x, lin_reg.predict(x), color="blue")
+    plt.title("truth or bluff")
+    plt.xlabel("position level")
+    plt.ylabel("salary")
+    plt.show()
+    plt.scatter(x, y, color="red")
+    plt.plot(x, lin_reg2.predict(poly_reg.fit_transform(x)), color="blue")
+    plt.title("truth or bluff")
+    plt.xlabel("position level")
+    plt.ylabel("salary")
+    plt.show()
+    X_grid = np.arange(min(x), max(x), 0.1)
+    X_grid = X_grid.reshape((len(X_grid), 1))
+    plt.scatter(x, y, color='red')
+    plt.plot(X_grid, lin_reg2.predict(poly_reg.fit_transform(X_grid)), color='blue')
+    plt.title('Truth or Bluff (Polynomial Regression)')
+    plt.xlabel('Position level')
+    plt.ylabel('Salary')
+    plt.show()
+    value1=input("enter the value you want to predict with linear regression:")
+    lin_reg.predict([[value1]])
+    value2=input("enter the value you want to predict with polynomial regression:")
+    lin_reg2.predict(poly_reg.fit_transform([[value2]]))
+
+    #--------------------------------------------------------svm regression---------------------------------------------------------------------
+
+  elif modelchoice1=="4":
+    print("your choice svm regression!")
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    file = input("enter the file path of the fileyou want to use:")
+    dataset = pd.read_csv(file)
+    x = dataset.iloc[:, 1:-1].values
+    y = dataset.iloc[:, -1].values
+    print(x)
+    print(y)
+    from sklearn.preprocessing import StandardScaler
+    sc_x = StandardScaler()
+    sc_y = StandardScaler()
+    x = sc_x.fit_transform(x)
+    y = sc_y.fit_transform(y)
+    print(x)
+    print(y)
+    from sklearn.svm import SVR
+    regressor = SVR(kernel="rbf")
+    regressor.fit(x, y)
+    valueofsvmregression=input("Enter the value you want to predict : ")
+    sc_y.inverse_transform(regressor.predict(sc_x.transform([[valueofsvmregression]])))
+    plt.scatter(sc_x.inverse_transform(x), sc_y.inverse_transform(y), color="red")
+    plt.plot(sc_x.inverse_transform(x), sc_y.inverse_transform(regressor.predict(x)), color="blue")
+    plt.title("truth or bluff (SVR)")
+    plt.xlabel("position level")
+    plt.ylabel("salary")
+    plt.show()
+    X_grid = np.arange(min(sc_x.inverse_transform(x)), max(sc_x.inverse_transform(x)), 0.1)
+    X_grid = X_grid.reshape((len(X_grid), 1))
+    plt.scatter(sc_x.inverse_transform(x), sc_y.inverse_transform(y), color='red')
+    plt.plot(X_grid, sc_y.inverse_transform(regressor.predict(sc_x.transform(X_grid))), color='blue')
+    plt.title('Truth or Bluff (SVR)')
+    plt.xlabel('Position level')
+    plt.ylabel('Salary')
+    plt.show()
+
+    #------------------------------------------else message-------------------------------------------------------------------------------------
+
+  else:
+    print("you did not choose anything!")
+
+      #-----------------------------------------------------end of regression-------------------------------------------------------------------
+
+      #------------------------------------------------------classification---------------------------------------------------------------------
+
+elif choice1=="2":
+  print("you have chosen classification")
+  print("choose your model!")
+  print("1-decison tree,2-random forest ")
+  modelchoice2=input("enter your choice of model(1 or 2)")
+
+  #----------------------------------------------------------decisiontreeclass------------------------------------------------------------------
+
+  if modelchoice2=="1":
+    print("your choice is decision tree!")
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    file = input("enter the file path of the fileyou want to use:")
+    dataset = pd.read_csv(file)
+    X = dataset.iloc[:, :-1].values
+    y = dataset.iloc[:, -1].values
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+    from sklearn.preprocessing import StandardScaler
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
+    from sklearn.tree import DecisionTreeClassifier
+    classifier = DecisionTreeClassifier(criterion='entropy', random_state=0)
+    classifier.fit(X_train, y_train)
+
+    #--------------------------------------------------------ramdomforestclass------------------------------------------------------------------
+
+  elif modelchoice2=="2":
+    print("your choice is random forest!")
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    file = input("enter the file path of the fileyou want to use:")
+    dataset = pd.read_csv(file)
+    X = dataset.iloc[:, :-1].values
+    y = dataset.iloc[:, -1].values
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+    print(X_train)
+    print(y_train)
+    print(X_test)
+    print(y_test)
+    from sklearn.preprocessing import StandardScaler
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
+    print(X_train)
+    print(X_test)
+    from sklearn.ensemble import RandomForestClassifier
+    classifier = RandomForestClassifier(n_estimators=10, criterion="entropy", random_state=0)
+    classifier.fit(X_train, y_train)
+    age=int(input("enter the age : "))
+    salary=int(input("enter the salary : "))
+    print(classifier.predict(sc.transform([[age,salary]])))
+    y_pred = classifier.predict(X_test)
+    print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)), 1))
+    from sklearn.metrics import confusion_matrix, accuracy_score
+    cm = confusion_matrix(y_test, y_pred)
+    print(cm)
+    accuracy_score(y_test, y_pred)
+    from matplotlib.colors import ListedColormap
+    X_set, y_set = sc.inverse_transform(X_train), y_train
+    X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min() - 10, stop=X_set[:, 0].max() + 10, step=0.25),
+                         np.arange(start=X_set[:, 1].min() - 1000, stop=X_set[:, 1].max() + 1000, step=0.25))
+    plt.contourf(X1, X2, classifier.predict(sc.transform(np.array([X1.ravel(), X2.ravel()]).T)).reshape(X1.shape),
+                 alpha=0.75, cmap=ListedColormap(('red', 'green')))
+    plt.xlim(X1.min(), X1.max())
+    plt.ylim(X2.min(), X2.max())
+    for i, j in enumerate(np.unique(y_set)):
+      plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1], c=ListedColormap(('red', 'green'))(i), label=j)
+    plt.title('Random Forest Classification (Training set)')
+    plt.xlabel('Age')
+    plt.ylabel('Estimated Salary')
+    plt.legend()
+    plt.show()
+    from matplotlib.colors import ListedColormap
+    X_set, y_set = sc.inverse_transform(X_test), y_test
+    X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min() - 10, stop=X_set[:, 0].max() + 10, step=0.25),
+                         np.arange(start=X_set[:, 1].min() - 1000, stop=X_set[:, 1].max() + 1000, step=0.25))
+    plt.contourf(X1, X2, classifier.predict(sc.transform(np.array([X1.ravel(), X2.ravel()]).T)).reshape(X1.shape),
+                 alpha=0.75, cmap=ListedColormap(('red', 'green')))
+    plt.xlim(X1.min(), X1.max())
+    plt.ylim(X2.min(), X2.max())
+    for i, j in enumerate(np.unique(y_set)):
+      plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1], c=ListedColormap(('red', 'green'))(i), label=j)
+    plt.title('Random Forest Classification (Test set)')
+    plt.xlabel('Age')
+    plt.ylabel('Estimated Salary')
+    plt.legend()
+    plt.show()
+
+    #--------------------------------------------------------else message--------------------------------------------------------------------------
+
+  else:
+    print("you did not choose any model")
+
+    #------------------------------------------------------categoryelsemessage---------------------------------------------------------------------
+else:
+  print("you did not choose any category!")
