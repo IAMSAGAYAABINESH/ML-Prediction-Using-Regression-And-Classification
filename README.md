@@ -4,7 +4,7 @@ You Can use The Sample file (Position_Salaries.csv)Provided and run The code!
 
 Note: 
 
-*If you have any missing data in you Dataset use the Missing-data.ipynb to fill the na cells with mean of the numbers!
+*If you have any missing data in you Dataset use(copy and paste) the Missing-data.ipynb before the splitting of the dataset to fill the na cells with mean of the numbers!
 
 *If Your Code Contains Categorical data use Encoding-Categorical-Data.ipynb Before Splitting The Dataset i.e You have to paste The code of Encoding-Categorical-Data.ipynb in the model you want after The Spliting Section of the code!
 
